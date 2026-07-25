@@ -1,0 +1,321 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* ==========================================================================
+   Abdelrahman OS — Design Tokens
+   Premium, dark-first, minimal personal operating system.
+   Cool navy void + warm "signal" accent + muted "cognition" accent for AI
+   surfaces. Tokens are the single source of truth — never hardcode hex
+   values in components.
+   ========================================================================== */
+
+:root {
+  /* --- Surfaces (dark is the primary mode; :root IS dark) -------------- */
+  --background: #0a0c10; /* the void */
+  --surface-1: #11141b; /* base panel */
+  --surface-2: #171b24; /* card */
+  --surface-3: #1e232e; /* elevated / popover / dialog */
+
+  /* --- Borders ------------------------------------------------------------ */
+  --border: #242933;
+  --border-strong: #363d4b;
+
+  /* --- Text -----------------------------------------------------------------
+     Warm-tinted off-white, like a console readout — never pure #fff. */
+  --text-primary: #f4f1ea;
+  --text-secondary: #a7adbb;
+  --text-muted: #6d7382;
+
+  /* --- Signature accents ------------------------------------------------------
+     "signal": warm bronze — the OS's primary interactive color, used
+     sparingly (one accent-filled control per view).
+     "cognition": muted violet — reserved for AI / Context Engine / memory
+     surfaces only, so it stays meaningful rather than decorative. */
+  --signal: #e3a455;
+  --signal-strong: #f0b86f;
+  --signal-foreground: #1a1206;
+
+  --cognition: #9c8cf2;
+  --cognition-strong: #b3a6f7;
+  --cognition-foreground: #14101f;
+
+  /* --- Semantic status ------------------------------------------------------- */
+  --success: #6fcf97;
+  --success-foreground: #0b1f13;
+  --danger: #e2685f;
+  --danger-foreground: #240a08;
+  --warning: #e3a455;
+  --warning-foreground: #1a1206;
+
+  /* --- Radius ------------------------------------------------------------------ */
+  --radius: 0.625rem;
+
+  /* --- Shadows (very restrained — this is a flat, minimal system) ------------- */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.35);
+  --shadow-md: 0 4px 16px -4px rgb(0 0 0 / 0.45);
+  --shadow-lg: 0 12px 40px -8px rgb(0 0 0 / 0.55);
+
+  /* --- Fonts (assigned via next/font in layout.tsx) ---------------------------- */
+  --font-display: var(--font-space-grotesk), 'Space Grotesk', ui-sans-serif, sans-serif;
+  --font-sans: var(--font-inter), 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+
+  /* --- Glass surfaces (Phase 1 — HUD design language) --------------------------
+     Translucent panel backgrounds, paired with backdrop-filter blur in the
+     .glass-blur utility below. Two levels, same pattern as surface-1/2/3. */
+  --glass-panel-bg: color-mix(in oklab, var(--surface-2) 58%, transparent);
+  --glass-panel-bg-strong: color-mix(in oklab, var(--surface-3) 70%, transparent);
+  --glass-border: color-mix(in oklab, var(--border-strong) 65%, transparent);
+  --glass-blur: 20px;
+  --glass-blur-sm: 10px;
+
+  /* --- Glow recipes --------------------------------------------------------------
+     Full box-shadow values (ring + soft aura), one per accent/status color, so
+     components apply a single utility instead of hand-tuning shadows each time. */
+  --glow-signal:
+    0 0 0 1px color-mix(in oklab, var(--signal) 45%, transparent),
+    0 0 28px -6px color-mix(in oklab, var(--signal) 65%, transparent);
+  --glow-signal-strong:
+    0 0 0 1px color-mix(in oklab, var(--signal) 65%, transparent),
+    0 0 40px -4px color-mix(in oklab, var(--signal) 80%, transparent);
+  --glow-cognition:
+    0 0 0 1px color-mix(in oklab, var(--cognition) 45%, transparent),
+    0 0 28px -6px color-mix(in oklab, var(--cognition) 65%, transparent);
+  --glow-success:
+    0 0 0 1px color-mix(in oklab, var(--success) 45%, transparent),
+    0 0 24px -6px color-mix(in oklab, var(--success) 60%, transparent);
+  --glow-warning:
+    0 0 0 1px color-mix(in oklab, var(--warning) 45%, transparent),
+    0 0 24px -6px color-mix(in oklab, var(--warning) 60%, transparent);
+  --glow-danger:
+    0 0 0 1px color-mix(in oklab, var(--danger) 45%, transparent),
+    0 0 24px -6px color-mix(in oklab, var(--danger) 60%, transparent);
+
+  /* Ambient background wash — a very low-opacity radial field, not a spotlight.
+     Used once at the shell level, never per-panel. */
+  --ambient-glow: radial-gradient(
+    ellipse 900px 560px at 50% -8%,
+    color-mix(in oklab, var(--cognition) 10%, transparent),
+    transparent 60%
+  );
+}
+
+/* Abdelrahman OS is dark-mode-first by product decision, not by
+   prefers-color-scheme. A future light theme overrides these same
+   variables under [data-theme="light"]. */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--text-primary);
+
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-signal: var(--signal);
+  --color-signal-strong: var(--signal-strong);
+  --color-signal-foreground: var(--signal-foreground);
+
+  --color-cognition: var(--cognition);
+  --color-cognition-strong: var(--cognition-strong);
+  --color-cognition-foreground: var(--cognition-foreground);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  /* shadcn/ui compatibility aliases so drop-in components from the
+     registry map onto our tokens without translation. */
+  --color-card: var(--surface-2);
+  --color-card-foreground: var(--text-primary);
+  --color-popover: var(--surface-3);
+  --color-popover-foreground: var(--text-primary);
+  --color-primary: var(--signal);
+  --color-primary-foreground: var(--signal-foreground);
+  --color-secondary: var(--surface-3);
+  --color-secondary-foreground: var(--text-primary);
+  --color-muted: var(--surface-2);
+  --color-muted-foreground: var(--text-secondary);
+  --color-accent: var(--surface-3);
+  --color-accent-foreground: var(--text-primary);
+  --color-destructive: var(--danger);
+  --color-destructive-foreground: var(--danger-foreground);
+  --color-input: var(--border);
+  --color-ring: var(--signal);
+
+  --color-glass-1: var(--glass-panel-bg);
+  --color-glass-2: var(--glass-panel-bg-strong);
+  --color-glass-border: var(--glass-border);
+
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  /* Motion timing vocabulary, shared between plain CSS transitions and the
+     Framer Motion variants in src/components/motion. */
+  --ease-os: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings:
+      'ss01' 1,
+      'cv01' 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-signal) 35%, transparent);
+    color: var(--color-text-primary);
+  }
+
+  /* Visible keyboard focus everywhere — never suppressed. */
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Thin gridlines used as ambient texture on the app shell background —
+     restrained, not decorative noise. */
+  .bg-grid {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in oklab, var(--color-border) 60%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--color-border) 60%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 48px 48px;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* ------------------------------------------------------------------------
+     HUD design language (Phase 1) — additive utilities only.
+     ------------------------------------------------------------------------ */
+
+  /* Ambient background wash — apply once, at the shell root. */
+  .bg-ambient {
+    background-image: var(--ambient-glow);
+  }
+
+  /* Backdrop blur paired with the bg-glass-1/bg-glass-2 theme colors. */
+  .glass-blur {
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+  }
+
+  .glass-blur-sm {
+    backdrop-filter: blur(var(--glass-blur-sm));
+    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+  }
+
+  /* Glow rings — a single utility per accent/status color. Apply directly;
+     do not hand-compose box-shadow in components. */
+  .glow-signal {
+    box-shadow: var(--glow-signal);
+  }
+  .glow-signal-strong {
+    box-shadow: var(--glow-signal-strong);
+  }
+  .glow-cognition {
+    box-shadow: var(--glow-cognition);
+  }
+  .glow-success {
+    box-shadow: var(--glow-success);
+  }
+  .glow-warning {
+    box-shadow: var(--glow-warning);
+  }
+  .glow-danger {
+    box-shadow: var(--glow-danger);
+  }
+
+  /* Corner bracket mark — used by HudFrame's four positioned spans, not
+     applied directly to panels. Centralizes the stroke width/color so every
+     bracket in the app matches. */
+  .hud-bracket {
+    transition: border-color 0.2s var(--ease-os);
+  }
+
+  /* Slow vertical scan sweep across a panel — signals "system reading data",
+     not decoration for its own sake. Used sparingly (loading/active states). */
+  .scanline {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .scanline::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    height: 40%;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      color-mix(in oklab, var(--signal) 12%, transparent),
+      transparent
+    );
+    animation: hud-scan 3.2s var(--ease-os) infinite;
+  }
+
+  @keyframes hud-scan {
+    0% {
+      transform: translateY(-120%);
+    }
+    100% {
+      transform: translateY(320%);
+    }
+  }
+}
