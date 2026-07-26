@@ -318,4 +318,20 @@
       transform: translateY(320%);
     }
   }
+
+  /* Faint flowing pulse along an OrbitConnector trace (Milestone 7) —
+     reinforces "energy moving toward the core" without JS. Works for
+     either stroke orientation since dasharray describes the pattern
+     along the path, not a fixed axis. Reduced-motion is already handled
+     globally (see the prefers-reduced-motion block above), same as
+     every other animation in the app. */
+  .orbit-trace {
+    animation: orbit-flow 2.4s linear infinite;
+  }
+
+  @keyframes orbit-flow {
+    to {
+      stroke-dashoffset: -14;
+    }
+  }
 }
